@@ -984,28 +984,40 @@ async function switchLanguage() {
   const REPO_NAME = "Portofolio-Salwa-Ekaputri-Gunarto";
   const FILE_PATH = "index.html";
 
-  // Otomatis bikin tombol Simpan di sebelah tombol Reset
+  // Paksa aktifkan tombol Mode Edit & Simpan meskipun dibuka di Vercel/Online
   document.addEventListener("DOMContentLoaded", () => {
-    const resetBtn = document.querySelector("button:contains('Reset'), [onclick*='reset'], .btn-reset, button[class*='reset']") || document.querySelector("header .flex") || document.querySelector("header");
-    
-    if (resetBtn && !document.getElementById("auto-save-btn")) {
+    // 1. Munculkan tombol Simpan Hijau
+    const headerContainer = document.querySelector("header .flex") || document.querySelector("header") || document.body;
+    if (headerContainer && !document.getElementById("auto-save-btn")) {
       const saveBtn = document.createElement("button");
       saveBtn.id = "auto-save-btn";
       saveBtn.innerHTML = "💾 Simpan ke Web";
-      saveBtn.style.cssText = "background: #10B981; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 10px; font-size: 13px;";
-      
+      saveBtn.style.cssText = "background: #10B981; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 10px; font-size: 13px; z-index: 9999; position: relative;";
       saveBtn.addEventListener("click", saveChangesToGithub);
-      
-      // Masukin tombolnya di sebelah kanan tombol Mode Edit / Reset
-      const modeEditContainer = document.querySelector(".flex.items-center") || resetBtn.parentNode;
-      modeEditContainer.appendChild(saveBtn);
+      headerContainer.appendChild(saveBtn);
     }
+
+    // 2. Aktifkan fitur klik/edit teks langsung
+    const editToggle = document.querySelector("#mode-edit-toggle") || document.querySelector("input[type='checkbox']");
+    if (editToggle) {
+      editToggle.checked = true; // Paksa Nyala
+      editToggle.dispatchEvent(new Event('change'));
+    }
+    
+    // Bikin semua elemen teks bisa diklik edit
+    document.querySelectorAll("h1, h2, h3, p, span").forEach(el => {
+      el.setAttribute("contenteditable", "true");
+      el.style.outline = "1px dashed rgba(99, 102, 241, 0.4)";
+      el.style.padding = "2px";
+    });
   });
 
   async function saveChangesToGithub() {
-    // Matikan mode edit sementara agar atribut editting bersih saat disimpan
-    const editables = document.querySelectorAll("[contenteditable='true']");
-    editables.forEach(el => el.removeAttribute("contenteditable"));
+    // Bersihkan garis bantu edit sebelum disimpan
+    document.querySelectorAll("[contenteditable]").forEach(el => {
+      el.removeAttribute("contenteditable");
+      el.style.outline = "none";
+    });
 
     const fullHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
 
