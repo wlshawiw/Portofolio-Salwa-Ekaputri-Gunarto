@@ -978,5 +978,46 @@ async function switchLanguage() {
     await translateAllNodes(document.body);
 }
     </script>
+    <script>
+  const GITHUB_TOKEN = "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";
+  const REPO_OWNER = "wlshawiw";
+  const REPO_NAME = "Portofolio-Salwa-Ekaputri-Gunarto";
+  const FILE_PATH = "index.html";
+
+  async function saveChangesToGithub() {
+    const fullHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+    const getFile = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      headers: { Authorization: `token ${GITHUB_TOKEN}` }
+    });
+    const fileData = await getFile.json();
+
+    const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: "Update konten via Visual Mode Edit",
+        content: btoa(unescape(encodeURIComponent(fullHtml))),
+        sha: fileData.sha
+      })
+    });
+
+    if (response.ok) {
+      alert("Berhasil disimpan! Link Vercel bakal otomatis berubah dalam 30 detik.");
+    } else {
+      alert("Gagal menyimpan ke GitHub. Cek token kamu lagi.");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const saveBtn = document.querySelector(".btn-save") || document.querySelector("#save-btn") || document.querySelector("button[onclick*='save']");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", saveChangesToGithub);
+    }
+  });
+</script>
 </body>
 </html>
