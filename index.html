@@ -938,43 +938,73 @@
                 location.reload();
             }
         }const translations = {
-            id: {
-                navHome: "Beranda",
-                navAbout: "Tentang Profil",
-                navExp: "Pengalaman",
-                navCert: "Pelatihan & Sertifikat",
-                navWorks: "Bukti Pekerjaan",
-                navSkills: "Keterampilan & Tools",
-                heroGreeting: "Halo, Saya",
-                btnProjects: "Lihat Hasil Karya",
-                btnCv: "Unduh CV / Resume"
-            },
-            en: {
-                navHome: "Home",
-                navAbout: "About Profile",
-                navExp: "Experience",
-                navCert: "Training & Certificates",
-                navWorks: "Portfolio & Works",
-                navSkills: "Skills & Tools",
-                heroGreeting: "Hello, I'm",
-                btnProjects: "View Projects",
-                btnCv: "Download CV / Resume"
-            }
-        };
+    id: {
+        "Beranda": "Beranda",
+        "Tentang Profil": "Tentang Profil",
+        "Pengalaman": "Pengalaman",
+        "Pelatihan & Sertifikat": "Pelatihan & Sertifikat",
+        "Bukti Pekerjaan": "Bukti Pekerjaan",
+        "Keterampilan & Tools": "Keterampilan & Tools",
+        "Halo, Saya": "Halo, Saya",
+        "Lihat Hasil Karya": "Lihat Hasil Karya",
+        "Unduh CV / Resume": "Unduh CV / Resume",
+        "Bidang Keahlian": "Bidang Keahlian",
+        "Komunikasi & Kampanye": "Komunikasi & Kampanye",
+        "Terverifikasi Profesional": "Terverifikasi Profesional",
+        "Pendidikan": "Pendidikan",
+        "Fokus Bidang": "Fokus Bidang",
+        "Tersedia untuk Project": "Tersedia untuk Project"
+    },
+    en: {
+        "Beranda": "Home",
+        "Tentang Profil": "About Profile",
+        "Pengalaman": "Experience",
+        "Pelatihan & Sertifikat": "Training & Certificates",
+        "Bukti Pekerjaan": "Portfolio & Works",
+        "Keterampilan & Tools": "Skills & Tools",
+        "Halo, Saya": "Hello, I'm",
+        "Lihat Hasil Karya": "View Projects",
+        "Unduh CV / Resume": "Download CV / Resume",
+        "Bidang Keahlian": "Area of Expertise",
+        "Komunikasi & Kampanye": "Communication & Campaigns",
+        "Terverifikasi Profesional": "Verified Professional",
+        "Pendidikan": "Education",
+        "Fokus Bidang": "Focus Area",
+        "Tersedia untuk Project": "Available for Projects"
+    }
+};
 
-        let currentLang = 'id';
+let currentLang = 'id';
 
-        function switchLanguage() {
-            currentLang = currentLang === 'id' ? 'en' : 'id';
-            document.getElementById('langLabel').textContent = currentLang === 'id' ? 'EN' : 'ID';
-            
-            document.querySelectorAll('[data-lang-key]').forEach(elem => {
-                const key = elem.getAttribute('data-lang-key');
-                if (translations[currentLang] && translations[currentLang][key]) {
-                    elem.textContent = translations[currentLang][key];
+function switchLanguage() {
+    currentLang = currentLang === 'id' ? 'en' : 'id';
+    
+    const langLabel = document.getElementById('langLabel');
+    if (langLabel) langLabel.textContent = currentLang === 'id' ? 'EN' : 'ID';
+    
+    const targetLang = currentLang;
+    const sourceLang = currentLang === 'en' ? 'id' : 'en';
+
+    function translateNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.nodeValue.trim();
+            if (text && translations[sourceLang]) {
+                for (let key in translations[sourceLang]) {
+                    if (translations[sourceLang][key] === text && translations[targetLang][key]) {
+                        node.nodeValue = node.nodeValue.replace(text, translations[targetLang][key]);
+                        break;
+                    }
                 }
-            });
+            }
+        } else {
+            for (let child of node.childNodes) {
+                translateNode(child);
+            }
         }
+    }
+
+    translateNode(document.body);
+}
     </script>
 </body>
 </html>
