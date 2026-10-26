@@ -937,73 +937,44 @@
             if (confirm("Apakah Anda yakin ingin mereset tampilan? (Halaman akan dimuat ulang)")) {
                 location.reload();
             }
-        }const translations = {
-    id: {
-        "Beranda": "Beranda",
-        "Tentang Profil": "Tentang Profil",
-        "Pengalaman": "Pengalaman",
-        "Pelatihan & Sertifikat": "Pelatihan & Sertifikat",
-        "Bukti Pekerjaan": "Bukti Pekerjaan",
-        "Keterampilan & Tools": "Keterampilan & Tools",
-        "Halo, Saya": "Halo, Saya",
-        "Lihat Hasil Karya": "Lihat Hasil Karya",
-        "Unduh CV / Resume": "Unduh CV / Resume",
-        "Bidang Keahlian": "Bidang Keahlian",
-        "Komunikasi & Kampanye": "Komunikasi & Kampanye",
-        "Terverifikasi Profesional": "Terverifikasi Profesional",
-        "Pendidikan": "Pendidikan",
-        "Fokus Bidang": "Fokus Bidang",
-        "Tersedia untuk Project": "Tersedia untuk Project"
-    },
-    en: {
-        "Beranda": "Home",
-        "Tentang Profil": "About Profile",
-        "Pengalaman": "Experience",
-        "Pelatihan & Sertifikat": "Training & Certificates",
-        "Bukti Pekerjaan": "Portfolio & Works",
-        "Keterampilan & Tools": "Skills & Tools",
-        "Halo, Saya": "Hello, I'm",
-        "Lihat Hasil Karya": "View Projects",
-        "Unduh CV / Resume": "Download CV / Resume",
-        "Bidang Keahlian": "Area of Expertise",
-        "Komunikasi & Kampanye": "Communication & Campaigns",
-        "Terverifikasi Profesional": "Verified Professional",
-        "Pendidikan": "Education",
-        "Fokus Bidang": "Focus Area",
-        "Tersedia untuk Project": "Available for Projects"
-    }
-};
+        }let currentLang = 'id';
 
-let currentLang = 'id';
-
-function switchLanguage() {
+async function switchLanguage() {
     currentLang = currentLang === 'id' ? 'en' : 'id';
     
     const langLabel = document.getElementById('langLabel');
     if (langLabel) langLabel.textContent = currentLang === 'id' ? 'EN' : 'ID';
-    
-    const targetLang = currentLang;
-    const sourceLang = currentLang === 'en' ? 'id' : 'en';
 
-    function translateNode(node) {
+    const targetLang = currentLang;
+
+    async function translateText(text, target) {
+        if (!text.trim()) return text;
+        try {
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${target}&dt=t&q=${encodeURIComponent(text)}`);
+            const data = await res.json();
+            return data[0].map(item => item[0]).join('');
+        } catch (e) {
+            return text;
+        }
+    }
+
+    async function translateAllNodes(node) {
         if (node.nodeType === Node.TEXT_NODE) {
             const text = node.nodeValue.trim();
-            if (text && translations[sourceLang]) {
-                for (let key in translations[sourceLang]) {
-                    if (translations[sourceLang][key] === text && translations[targetLang][key]) {
-                        node.nodeValue = node.nodeValue.replace(text, translations[targetLang][key]);
-                        break;
-                    }
-                }
+            if (text.length > 1 && !/^\d+$/.test(text)) {
+                const translated = await translateText(text, targetLang);
+                node.nodeValue = node.nodeValue.replace(text, translated);
             }
         } else {
-            for (let child of node.childNodes) {
-                translateNode(child);
+            if (node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE') {
+                for (let child of node.childNodes) {
+                    await translateAllNodes(child);
+                }
             }
         }
     }
 
-    translateNode(document.body);
+    await translateAllNodes(document.body);
 }
     </script>
 </body>
