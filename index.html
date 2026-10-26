@@ -975,7 +975,7 @@ async function switchLanguage() {
     await translateAllNodes(document.body);
 }
     </script>
-   <script>
+  <script>
   document.addEventListener("DOMContentLoaded", () => {
     const isOwner = localStorage.getItem("salwa_owner_mode") === "true";
 
@@ -984,7 +984,7 @@ async function switchLanguage() {
     } else {
       const unlockBtn = document.createElement("button");
       unlockBtn.innerHTML = "🔒 Mode Edit Pemilik";
-      unlockBtn.style.cssText = "position: fixed; bottom: 20px; right: 20px; background: #111827; color: white; border: 2px solid white; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; z-index: 999999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);";
+      unlockBtn.style.cssText = "position: fixed; bottom: 20px; right: 20px; background: #111827; color: white; border: 2px solid white; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; z-index: 9999999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);";
       unlockBtn.addEventListener("click", () => {
         const pass = prompt("Masukkan sandi khusus pemilik web:");
         if (pass === "wawcantikbet") {
@@ -1000,24 +1000,18 @@ async function switchLanguage() {
   });
 
   function aktifkanModeEdit() {
-    // Sembunyikan iframe nakal agar tidak menutupi tombol
-    document.querySelectorAll("iframe").forEach(iframe => {
-      iframe.style.pointerEvents = "none";
-      iframe.style.display = "none";
-    });
-
     const headerContainer = document.querySelector("header .flex") || document.querySelector("header") || document.body;
     if (headerContainer && !document.getElementById("auto-save-btn")) {
       const saveBtn = document.createElement("button");
       saveBtn.id = "auto-save-btn";
       saveBtn.innerHTML = "💾 Simpan ke Web";
-      saveBtn.style.cssText = "background: #10B981; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 10px; font-size: 13px; z-index: 999999; position: relative;";
+      saveBtn.style.cssText = "background: #10B981; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 10px; font-size: 13px; z-index: 9999999; position: relative;";
       saveBtn.addEventListener("click", saveChangesToGithub);
       headerContainer.appendChild(saveBtn);
 
       const logoutBtn = document.createElement("button");
       logoutBtn.innerHTML = "🔒 Kunci Lagi";
-      logoutBtn.style.cssText = "background: #EF4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 5px; font-size: 13px; z-index: 999999; position: relative;";
+      logoutBtn.style.cssText = "background: #EF4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 5px; font-size: 13px; z-index: 9999999; position: relative;";
       logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("salwa_owner_mode");
         location.reload();
@@ -1035,11 +1029,6 @@ async function switchLanguage() {
   async function saveChangesToGithub() {
     const tokenInput = prompt("Masukkan Personal Access Token GitHub kamu untuk menyimpan:");
     if (!tokenInput) return;
-
-    const saveBtn = document.getElementById("auto-save-btn");
-    const logoutBtn = document.getElementById("auto-save-btn")?.nextElementSibling;
-    if (saveBtn) saveBtn.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "none";
 
     document.querySelectorAll("[contenteditable]").forEach(el => {
       el.removeAttribute("contenteditable");
@@ -1075,18 +1064,12 @@ async function switchLanguage() {
 
       if (response.ok) {
         alert("Berhasil disimpan! Link Vercel akan otomatis berubah dalam 30 detik.");
-        localStorage.removeItem("salwa_owner_mode");
         location.reload();
       } else {
         alert("Gagal menyimpan ke GitHub. Periksa kembali token kamu.");
-        if (saveBtn) saveBtn.style.display = "inline-block";
-        if (logoutBtn) logoutBtn.style.display = "inline-block";
       }
     } catch (err) {
       alert("Terjadi kesalahan jaringan.");
-      if (saveBtn) saveBtn.style.display = "inline-block";
-      if (logoutBtn) logoutBtn.style.display = "inline-block";
     }
   }
 </script>
-<button id="auto-save-btn" style="background: rgb(16, 185, 129); color: white; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 10px; font-size: 13px; z-index: 999999; position: relative; display: none;">💾 Simpan ke Web</button><button style="background: rgb(239, 68, 68); color: white; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 5px; font-size: 13px; z-index: 999999; position: relative; display: none;">🔒 Kunci Lagi</button></body></html>
