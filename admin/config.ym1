@@ -6,12 +6,13 @@ media_folder: "images"
 public_folder: "/images"
 
 collections:
-  - name: "pages"
-    label: "Halaman Web"
+  - name: "portfolio"
+    label: "Edit Portofolio"
     files:
       - file: "index.html"
         label: "Halaman Utama"
-        name: "index"
+        name: "home"
         fields:
-          - {label: "Nama Lengkap", name: "title", widget: "string"}
-          - {label: "Deskripsi Profil", name: "description", widget: "text"}
+          - {label: "Nama Lengkap", name: "hero_title", widget: "string"}
+          - {label: "Sub-judul / Profesi", name: "hero_subtitle", widget: "string"}
+          - {label: "Deskripsi Profil", name: "hero_desc", widget: "text"}
