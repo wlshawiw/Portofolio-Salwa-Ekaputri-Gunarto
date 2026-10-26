@@ -984,9 +984,34 @@ async function switchLanguage() {
   const REPO_NAME = "Portofolio-Salwa-Ekaputri-Gunarto";
   const FILE_PATH = "index.html";
 
-  // Paksa aktifkan tombol Mode Edit & Simpan meskipun dibuka di Vercel/Online
   document.addEventListener("DOMContentLoaded", () => {
-    // 1. Munculkan tombol Simpan Hijau
+    // KUNCI KEAMANAN: Cek apakah yang buka web ini adalah kamu (pakai password rahasia sederhana)
+    // Orang lain yang buka link Vercel tidak akan tahu password ini, jadi web tetap aman terkunci.
+    const isOwner = localStorage.getItem("salwa_owner_mode") === "true";
+
+    if (isOwner) {
+      aktifkanModeEdit();
+    } else {
+      // Tombol rahasia di pojok bawah untuk login khusus pemilik web
+      const unlockBtn = document.createElement("button");
+      unlockBtn.innerHTML = "🔒 Mode Edit Pemilik";
+      unlockBtn.style.cssText = "position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; z-index: 99999;";
+      unlockBtn.addEventListener("click", () => {
+        const pass = prompt("Masukkan sandi khusus pemilik web:");
+        if (pass === "salwa123") { // Kamu bisa ganti kata sandinya di sini
+          localStorage.setItem("salwa_owner_mode", "true");
+          alert("Mode Edit Aktif!");
+          location.reload();
+        } else {
+          alert("Sandi salah!");
+        }
+      });
+      document.body.appendChild(unlockBtn);
+    }
+  });
+
+  function aktifkanModeEdit() {
+    // Munculkan Tombol Simpan & Logout Edit
     const headerContainer = document.querySelector("header .flex") || document.querySelector("header") || document.body;
     if (headerContainer && !document.getElementById("auto-save-btn")) {
       const saveBtn = document.createElement("button");
@@ -995,25 +1020,26 @@ async function switchLanguage() {
       saveBtn.style.cssText = "background: #10B981; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 10px; font-size: 13px; z-index: 9999; position: relative;";
       saveBtn.addEventListener("click", saveChangesToGithub);
       headerContainer.appendChild(saveBtn);
+
+      const logoutBtn = document.createElement("button");
+      logoutBtn.innerHTML = "🔒 Kunci Lagi";
+      logoutBtn.style.cssText = "background: #EF4444; color: white; border: none; padding: 6px 10px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 5px; font-size: 13px; z-index: 9999; position: relative;";
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("salwa_owner_mode");
+        location.reload();
+      });
+      headerContainer.appendChild(logoutBtn);
     }
 
-    // 2. Aktifkan fitur klik/edit teks langsung
-    const editToggle = document.querySelector("#mode-edit-toggle") || document.querySelector("input[type='checkbox']");
-    if (editToggle) {
-      editToggle.checked = true; // Paksa Nyala
-      editToggle.dispatchEvent(new Event('change'));
-    }
-    
-    // Bikin semua elemen teks bisa diklik edit
+    // Bikin teks bisa diedit khusus saat mode aktif
     document.querySelectorAll("h1, h2, h3, p, span").forEach(el => {
       el.setAttribute("contenteditable", "true");
       el.style.outline = "1px dashed rgba(99, 102, 241, 0.4)";
       el.style.padding = "2px";
     });
-  });
+  }
 
   async function saveChangesToGithub() {
-    // Bersihkan garis bantu edit sebelum disimpan
     document.querySelectorAll("[contenteditable]").forEach(el => {
       el.removeAttribute("contenteditable");
       el.style.outline = "none";
