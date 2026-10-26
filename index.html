@@ -96,7 +96,12 @@
             <i class="fas fa-moon dark:hidden"></i>
             <i class="fas fa-sun hidden dark:inline text-amber-400"></i>
         </button>
-       
+       <!-- TOGGLE BAHASA (ID / EN) -->
+        <div class="h-4 w-px bg-slate-300 dark:bg-slate-700"></div>
+        <button onclick="switchLanguage()" class="px-3 py-1 text-xs font-bold rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 hover:bg-violet-200 transition-colors flex items-center gap-1">
+            <i class="fas fa-globe text-xs"></i>
+            <span id="langLabel">EN</span>
+        </button>
     </div>
 
     <!-- SIDEBAR NAVIGASI (DESKTOP) -->
@@ -932,6 +937,43 @@
             if (confirm("Apakah Anda yakin ingin mereset tampilan? (Halaman akan dimuat ulang)")) {
                 location.reload();
             }
+        }const translations = {
+            id: {
+                navHome: "Beranda",
+                navAbout: "Tentang Profil",
+                navExp: "Pengalaman",
+                navCert: "Pelatihan & Sertifikat",
+                navWorks: "Bukti Pekerjaan",
+                navSkills: "Keterampilan & Tools",
+                heroGreeting: "Halo, Saya",
+                btnProjects: "Lihat Hasil Karya",
+                btnCv: "Unduh CV / Resume"
+            },
+            en: {
+                navHome: "Home",
+                navAbout: "About Profile",
+                navExp: "Experience",
+                navCert: "Training & Certificates",
+                navWorks: "Portfolio & Works",
+                navSkills: "Skills & Tools",
+                heroGreeting: "Hello, I'm",
+                btnProjects: "View Projects",
+                btnCv: "Download CV / Resume"
+            }
+        };
+
+        let currentLang = 'id';
+
+        function switchLanguage() {
+            currentLang = currentLang === 'id' ? 'en' : 'id';
+            document.getElementById('langLabel').textContent = currentLang === 'id' ? 'EN' : 'ID';
+            
+            document.querySelectorAll('[data-lang-key]').forEach(elem => {
+                const key = elem.getAttribute('data-lang-key');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    elem.textContent = translations[currentLang][key];
+                }
+            });
         }
     </script>
 </body>
